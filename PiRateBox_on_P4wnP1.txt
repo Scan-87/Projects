@@ -1,0 +1,20 @@
+piratebox 
+
+
+1. apt update
+2. apt install php-cli	решает проблему краша lighttpd
+3. git clone https://github.com/PirateBox-Dev/PirateBoxScripts_Webserver
+4. cd PirateBox_Webserver/piratebox
+5. ./install.sh
+yes I want to install dependencies
+
+6. service piratebox start
+check if everything is ok
+
+7. vim /opt/piratebox/conf/piratebox.conf
+	NET=172.24.0
+8. vim /opt/piratebox/www/index.html
+	content="0;url=http://172.24.0.1/content"
+9. vim /opt/piratebox/www/content/index.html
+	:%s/piratebox.lan/172.24.0.1
+10. systemctl enable piratebox
