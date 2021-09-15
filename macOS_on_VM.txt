@@ -1,0 +1,4 @@
+https://www.youtube.com/watch?v=7RKqwRhw-y8&t=54s
+
+Дополнения:
+VBoxManage modifyvm "Catalina" --cpu-profile "Intel Core i7-6700K"
