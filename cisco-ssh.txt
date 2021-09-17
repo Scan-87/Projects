@@ -1,0 +1,16 @@
+cisco ssh 
+
+Switch(config)# hostname SW1
+SW1(config)# ip domain-name mynet.local
+SW1(config)# interface vlan 1
+SW1(config-if)# ip addr 192.168.1.2 255.255.255.0
+SW1(config-if)# no shutdown
+
+
+SW1(config)# crypto key generate rsa
+2048
+SW1(config)# ip ssh version 2
+SW1(config)# line vty 0 4
+SW1(config-line)# transport input ssh
+SW1(config-line)# login local
+SW1(config)# username <admin> password <pass>
