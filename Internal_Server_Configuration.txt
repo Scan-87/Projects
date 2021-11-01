@@ -1,0 +1,49 @@
+SMB Share
+
+# apt install samba smbclient
+# cd /etc/samba
+# cp smb.conf smb.conf.back
+
+# useradd <smbuser>
+# passwd <smbuser>		пароль пользователя
+# smbpasswd -a <smbuser>	пароль для подключения по SMB
+
+# mkdir /FileShare/<smbuser>	публичная шара
+# mkdir /FileShare/<smbguest> 	приватная шара
+
+# chmod 777 /FileShare/smbguest
+# chown root:smbuser /FileShare/smbguest
+# chmod 770 /FileShare/smbuser
+# chown root:smbuser /FileShare/smbuser
+
+# vim smb.conf 
+	[global]
+		server role = standalone server
+	        map to guest = Bad User
+        	usershare allow guests = no
+        	hosts allow = 192.168.0.0/22, 192.168.255.0/24
+        	hosts deny = 0.0.0.0/0
+		
+	[Public]
+		comment = public share
+		path = /FileShare/smbguest
+		guest ok = yes
+		browsable = yes
+		writable = yes
+		read only = no
+		force user = smbuser
+		force group = smbuser
+
+	[Private]
+		comment = private share
+		path = /FileShare/smbuser
+		guest ok = no
+		browsable = yes		хотим что бы шара была видна?
+		read only = no
+		force user = smbuser
+		force group = smbuser
+
+# service smbd restart
+
+
+
