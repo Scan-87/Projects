@@ -47,3 +47,66 @@ SMB Share
 
 
 
+
+
+Rsync Backups
+
+Server
+
+# apt-get install rsync
+# vim /etc/default/rsync
+	RSYNC_ENABLE=true
+	
+# touch /etc/rsyncd.conf
+# vim /etc/rsyncd.conf
+
+max connections = 10
+exclude = lost+found/
+dont compress   = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2 *.rar *.7z *.mp3 *.jpg 
+
+[laptop]
+    uid = smblaptop
+    gid = smblaptop
+    path = /FileShare/SMB_backups/laptop
+    comment = laptop backup
+    read only = no
+    list = yes
+    auth users = smblaptop
+    secrets file = /etc/rsyncd.scrt
+    hosts allow = 192.168.1.11 
+    hosts deny = *
+ 
+
+[vdsina]
+    uid = smbvdsina
+    gid = smbvdsina
+    path = /FileShare/SMB_backups/vdsina
+    comment = vdsina backup
+    read only = no
+    list = yes
+    auth users = smbvdsina
+    secrets file = /etc/rsyncd.scrt
+    hosts allow = 192.168.255.1 
+    hosts deny = *
+
+
+# vim /etc/rsyncd.scrt
+smblaptop:password
+smbvdsina:password
+
+# chmod 600 /etc/rsyncd.scrt
+# service rsync restart
+
+
+
+Client
+
+# vim ~/.rsync.scrt
+<password>
+# chmod 600 ~/.rsync.scrt
+
+# sudo rsync -aAXvv --password-file=~/.rsync.scrt / --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} smblaptop@192.168.2.10::laptop/ubuntu 	
+
+
+
+
