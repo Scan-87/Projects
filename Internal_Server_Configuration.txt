@@ -110,3 +110,66 @@ Client
 
 
 
+
+Nextcloud Compose
+Предварительно создать сеть nextcloud. Указанные адреса должны в нее входить
+Создать директории по пути из volumes, должны принадлежать www-data
+
+version: '3' 
+
+services:
+  nextclouddb:
+    image: mariadb:latest
+    container_name: nextcloud-mariadb
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    volumes:
+      - /FileShare/Nextcloud/MySql:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        ipv4_address: 172.19.0.11
+    environment:
+      - MYSQL_ROOT_PASSWORD=<pass>
+      - MYSQL_PASSWORD=<pass>
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=<user>
+    restart: unless-stopped
+  
+  nextcloudapp:
+    image: nextcloud:latest
+    container_name: nextcloud-app
+    networks:
+      default:
+        ipv4_address: 172.19.0.10
+    volumes:
+      - /home/Nextcloud-config/html:/var/www/html
+      - /home/Nextcloud-config/custom_apps:/var/www/html/custom_apps
+      - /FileShare/Nextcloud/data:/var/www/html/data
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    ports:
+      - 8080:80
+
+networks:
+  default:
+    external:
+      name: nextcloud_network
+
+
+Доступ из-за Proxy
+# vim html/config/config.php
+
+'trusted_domains' =>
+  array (
+    0 => '192.168.2.10:8080',
+    1 => '172.168.255.20',
+    2 => '172.17.0.1:80',
+  ),
+закоментировать:
+  #  'overwrite.cli.url' => 'http://192.168.2.10:8080',
+добавить:
+  'overwritehost' => 'cloud.scan-87.online:443',
+  'overwriteprotocol' => 'https',
+
+
+
